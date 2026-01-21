@@ -3,6 +3,7 @@ import { ScrollView, Text, View } from "react-native";
 import FastImage from "@d11/react-native-fast-image";
 import { useStyles } from "../../theme/ThemeContext";
 import { useGw2Api } from "../gw2/Gw2ApiContext";
+import { Divider } from "../Divider";
 
 const EQUIPMENT_GROUPS = {
   armor: ["Helm", "Shoulders", "Coat", "Gloves", "Leggings", "Boots"],
@@ -115,7 +116,9 @@ export function EquipmentTab() {
     <ScrollView>
       <View style={Styles.screen}>
         <Text style={Styles.h1}>Equipment</Text>
+        <Divider />
         <Text style={Styles.h1}>{selectedCharacter}</Text>
+        <Divider />
 
         {localError ? (
           <Text style={Styles.p}>Error: {localError}</Text>
@@ -141,7 +144,9 @@ export function EquipmentTab() {
                   );
                 })}
               </View>
+              <Divider />
             </View>
+
           ))
         )}
       </View>

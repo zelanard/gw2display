@@ -88,7 +88,7 @@ export function Gw2ApiProvider({ children }) {
     },
     [apiKey]
   );
-  
+
   const getAccount = useCallback(async () => {
     return await request("/v2/account", { auth: true });
   }, [request]);
@@ -144,52 +144,60 @@ export function Gw2ApiProvider({ children }) {
     async (characterName, { resolve = true } = {}) => {
       const active = await getActiveBuildTab(characterName);
 
-      // active.specializations: { pve, pvp, wvw } each is array of { id, traits: number[] }
-      // active.skills: { pve, pvp, wvw } each has heal/utilities/elite (skill ids)
-      const specsByMode = active?.specializations ?? null;
-      const skillsByMode = active?.skills ?? null;
+      const build = active?.build ?? null;
+      const specs = Array.isArray(build?.specializations) ? build.specializations : [];
+      const specializationIds = specs
+        .map((s) => s?.id)
+        .filter((id) => Number.isInteger(id));
+
+      const landSkills = build?.skills ?? null;
+      const aquaticSkills = build?.aquatic_skills ?? null;
 
       if (!resolve) {
-        return { characterName, specializations: specsByMode, skills: skillsByMode, raw: active };
+        return {
+          characterName,
+          profession: build?.profession ?? null,
+          specializations: specs,
+          skills: landSkills,
+          aquatic_skills: aquaticSkills,
+          raw: active,
+        };
       }
 
-      // Collect trait ids across all modes
+      // Collect trait ids (from the 3 specialization lines)
       const traitIds = [];
-      for (const mode of ["pve", "pvp", "wvw"]) {
-        const lines = specsByMode?.[mode];
-        if (Array.isArray(lines)) {
-          for (const line of lines) {
-            if (Array.isArray(line?.traits)) traitIds.push(...line.traits);
-          }
-        }
+      for (const line of specs) {
+        if (Array.isArray(line?.traits)) traitIds.push(...line.traits);
       }
 
-      // Collect skill ids across all modes
+      // Collect skill ids from both land and aquatic
       const skillIds = [];
-      for (const mode of ["pve", "pvp", "wvw"]) {
-        const s = skillsByMode?.[mode];
+      for (const s of [landSkills, aquaticSkills]) {
         if (!s) continue;
         if (Number.isInteger(s?.heal)) skillIds.push(s.heal);
         if (Array.isArray(s?.utilities)) skillIds.push(...s.utilities);
         if (Number.isInteger(s?.elite)) skillIds.push(s.elite);
       }
 
-      const [traits, skills] = await Promise.all([
+      const [traits, skills, specializations] = await Promise.all([
         bulkGetByIds("traits", traitIds),
         bulkGetByIds("skills", skillIds),
+        bulkGetByIds("specializations", specializationIds),
       ]);
-
-      // Index for convenience
-      const traitsById = new Map(traits.map((t) => [t.id, t]));
-      const skillsById = new Map(skills.map((s) => [s.id, s]));
+      const specializationsById = Object.fromEntries((specializations ?? []).map((s) => [s.id, s]));
+      const traitsById = Object.fromEntries((traits ?? []).map((t) => [t.id, t]));
+      const skillsById = Object.fromEntries((skills ?? []).map((s) => [s.id, s]));
 
       return {
         characterName,
-        specializations: specsByMode,
-        skills: skillsByMode,
+        profession: build?.profession ?? null,
+        specializations: specs,
+        skills: landSkills,
+        aquatic_skills: aquaticSkills,
         resolved: {
           traitsById,
           skillsById,
+          specializationsById,
         },
         raw: active,
       };
