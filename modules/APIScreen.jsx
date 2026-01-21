@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useGw2Api } from "./gw2/Gw2ApiContext";
@@ -8,7 +8,13 @@ import { ScrollView } from "react-native-gesture-handler";
 export function APIScreen() {
   const Styles = useStyles();
   const { apiKey, setApiKey, account, characters, loading, error, refreshAll, clearError } = useGw2Api();
-  const [draftKey, setDraftKey] = useState(apiKey || "");
+
+  const [draftKey, setDraftKey] = useState(apiKey ?? "");
+
+  useEffect(() => {
+    // Keep the text box in sync with the context value (e.g., after async hydration)
+    setDraftKey(apiKey ?? "");
+  }, [apiKey]);
 
   return (
     <ScrollView>

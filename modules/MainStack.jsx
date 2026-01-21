@@ -8,11 +8,13 @@ import { APIScreen } from "./APIScreen";
 import { SettingsScreen } from "./SettingsScreen";
 import { TopBar } from "./TopBar";
 import Orientation from "react-native-orientation-locker";
+import { TitleContext } from "./TitleContext"; // or same file
 
 export function MainStack() {
   const Stack = createNativeStackNavigator();
 
   const [orientation, setOrientation] = useState("PORTRAIT");
+  const [title, setTitle] = useState("");
 
   useEffect(() => {
     Orientation.getOrientation(setOrientation);
@@ -25,63 +27,52 @@ export function MainStack() {
 
   const sidebarWidth = 72;
 
-  // PORTRAIT: use the navigator header like normal
-  if (!isLandscape) {
-    return (
-      <Stack.Navigator
-        screenOptions={{
-          header: (props) => <TopBar {...props} isLandscape={false} />,
-          contentStyle: { backgroundColor: "#0B0F17" },
-        }}
-      >
-        <Stack.Screen
-          name="Home"
-          component={HomeScreen}
-          options={{ title: "My App" }}
-        />
-        <Stack.Screen
-          name="API"
-          component={APIScreen}
-          options={{ title: "API Keys" }}
-        />
-        <Stack.Screen
-          name="Settings"
-          component={SettingsScreen}
-          options={{ title: "Settings" }}
-        />
-      </Stack.Navigator>
-    );
-  }
-
-  // LANDSCAPE: render TopBar as a real left sidebar (NOT as header)
   return (
-    <View style={{ flex: 1, flexDirection: "row", backgroundColor: "#0B0F17" }}>
-      <TopBar isLandscape={true} sidebarWidth={sidebarWidth} />
-
-      <View style={{ flex: 1 }}>
+    <TitleContext.Provider value={{ title, setTitle }}>
+      {/* PORTRAIT */}
+      {!isLandscape && (
         <Stack.Navigator
           screenOptions={{
-            headerShown: false,
+            header: (props) => (
+              <TopBar {...props} isLandscape={false} />
+            ),
             contentStyle: { backgroundColor: "#0B0F17" },
           }}
         >
-          <Stack.Screen
-            name="Home"
-            component={HomeScreen}
-            options={{ title: "My App" }}
-          />
-          <Stack.Screen
-            name="API"
-            component={APIScreen}
-            options={{ title: "API Keys" }}
-          />
-          <Stack.Screen
-            name="Settings"
-            component={SettingsScreen}
-            options={{ title: "Settings" }}
-          />
+          <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen name="API" component={APIScreen} />
+          <Stack.Screen name="Settings" component={SettingsScreen} />
         </Stack.Navigator>
-      </View>
-    </View>
+      )}
+
+      {/* LANDSCAPE */}
+      {isLandscape && (
+        <View
+          style={{
+            flex: 1,
+            flexDirection: "row",
+            backgroundColor: "#0B0F17",
+          }}
+        >
+          <TopBar isLandscape sidebarWidth={sidebarWidth} />
+
+          <View style={{ flex: 1 }}>
+            <Stack.Navigator
+              screenOptions={{
+                headerShown: false,
+                contentStyle: { backgroundColor: "#0B0F17" },
+              }}
+            >
+              <Stack.Screen name="Home" component={HomeScreen} />
+              <Stack.Screen name="API" component={APIScreen} />
+              <Stack.Screen
+                name="Settings"
+                component={SettingsScreen}
+              />
+            </Stack.Navigator>
+          </View>
+        </View>
+      )}
+    </TitleContext.Provider>
   );
 }

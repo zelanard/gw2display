@@ -20,34 +20,14 @@ export function DrawerContent(props) {
     <DrawerContentScrollView {...props} contentContainerStyle={Styles.drawerContainer}>
       <ScrollView>
         <View style={Styles.drawerHeader}>
-          <Text style={Styles.drawerTitle}>Menu</Text>
-          <Text style={Styles.drawerSubtitle}>Expandable sections</Text>
+          <Text style={Styles.drawerTitle}>GW 2 Display</Text>
         </View>
 
         <View style={Styles.drawerBody}>
-          <ExpandableSection
-            title="Account"
-            isOpen={open === "account"}
-            onToggle={() => setOpen(open === "account" ? null : "account")}
-          >
             <Pressable onPress={() => navTo("API")} style={Styles.item}>
               <Text style={Styles.itemText}>API</Text>
             </Pressable>
-          </ExpandableSection>
 
-          <ExpandableSection
-            title="App"
-            isOpen={open === "app"}
-            onToggle={() => setOpen(open === "app" ? null : "app")}
-          >
-            <Pressable onPress={() => navTo("Home")} style={Styles.item}>
-              <Text style={Styles.itemText}>Home</Text>
-            </Pressable>
-
-            <Pressable onPress={() => navTo("Settings")} style={Styles.item}>
-              <Text style={Styles.itemText}>Settings</Text>
-            </Pressable>
-          </ExpandableSection>
           <ExpandableSection
             title="Characters"
             isOpen={open === "characters"}

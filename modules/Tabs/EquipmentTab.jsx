@@ -4,6 +4,7 @@ import FastImage from "@d11/react-native-fast-image";
 import { useStyles } from "../../theme/ThemeContext";
 import { useGw2Api } from "../gw2/Gw2ApiContext";
 import { Divider } from "../Divider";
+import { useTitle } from "../TitleContext";
 
 const EQUIPMENT_GROUPS = {
   armor: ["Helm", "Shoulders", "Coat", "Gloves", "Leggings", "Boots"],
@@ -67,6 +68,7 @@ function EquipmentCell({ slot, item, Styles }) {
 
 export function EquipmentTab() {
   const Styles = useStyles();
+  const { setTitle } = useTitle();
   const { selectedCharacter, getCharacterEquipmentResolved } = useGw2Api();
 
   const [data, setData] = useState(null);
@@ -96,6 +98,10 @@ export function EquipmentTab() {
     };
   }, [selectedCharacter, getCharacterEquipmentResolved]);
 
+  useEffect(() => {
+    setTitle(selectedCharacter ? selectedCharacter : "Build");
+  }, [selectedCharacter, setTitle]);
+
   const equipment = data?.equipment ?? [];
   const itemsById = data?.itemsById ?? {};
 
@@ -116,8 +122,6 @@ export function EquipmentTab() {
     <ScrollView>
       <View style={Styles.screen}>
         <Text style={Styles.h1}>Equipment</Text>
-        <Divider />
-        <Text style={Styles.h1}>{selectedCharacter}</Text>
         <Divider />
 
         {localError ? (

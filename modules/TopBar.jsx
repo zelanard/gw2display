@@ -1,79 +1,59 @@
-// TopBar.js
+// TopBar.js (or TopBar.jsx)
 
-import "react-native-gesture-handler";
-import React, { useMemo } from "react";
+import React from "react";
 import { View, Text, Pressable } from "react-native";
-import { DrawerActions, useNavigation } from "@react-navigation/native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { useStyles } from "../theme/ThemeContext";
+import { useNavigation, DrawerActions } from "@react-navigation/native";
+import Ionicons from "react-native-vector-icons/Ionicons";
+import { useTitle } from "./TitleContext";
 
-export function TopBar({
-  navigation,
-  route,
-  options,
-  isLandscape,
-  sidebarWidth = 72,
-}) {
-  const Styles = useStyles();
+export function TopBar({ isLandscape, sidebarWidth }) {
+  const { title } = useTitle();
+  const navigation = useNavigation();
 
-  // Fallback navigation for landscape (when TopBar is rendered outside header)
-  const navFromHook = useNavigation();
-  const nav = navigation || navFromHook;
-
-  const title = options?.title ?? route?.name ?? "";
-
-  const edges = useMemo(() => (isLandscape ? ["left"] : ["top"]), [isLandscape]);
+  const openMenu = () => {
+    navigation.dispatch(DrawerActions.openDrawer());
+  };
 
   return (
-    <SafeAreaView
-      edges={edges}
-      style={[
-        Styles.topBarSafe,
-        isLandscape ? { width: sidebarWidth } : null,
-      ]}
+    <View
+      style={{
+        width: isLandscape ? sidebarWidth : "100%",
+        height: isLandscape ? "100%" : 56,
+        paddingHorizontal: 12,
+        paddingTop: isLandscape ? 12 : 25,
+        justifyContent: isLandscape ? "flex-start" : "center",
+        backgroundColor: "#0B0F17",
+      }}
     >
-      <View
-        style={[
-          Styles.topBar,
-          isLandscape
-            ? {
-                flex: 1,
-                flexDirection: "column",
-                alignItems: "center",
-                paddingVertical: 12,
-              }
-            : {
-                flexDirection: "row",
-                alignItems: "center",
-              },
-        ]}
-      >
-        {/* LEFT SLOT */}
-        <View style={{ width: 56, alignItems: "center", justifyContent: "center" }}>
+
+      {!isLandscape ? (
+        <View style={{ flexDirection: "row", marginTop:"18", alignItems: "center" }}>
           <Pressable
-            onPress={() => nav.dispatch(DrawerActions.toggleDrawer())}
-            style={Styles.iconBtn}
-            hitSlop={10}
+            onPress={openMenu}
+            style={{
+              width: 44,
+              height: 44,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+            hitSlop={8}
           >
-            <Text style={Styles.iconText}>☰</Text>
+            <Ionicons name="menu-outline" size={26} color="white" />
           </Pressable>
+
+          <Text style={{ color: "white", fontSize: 18 }} numberOfLines={1}>
+            {title}
+          </Text>
         </View>
 
-        {/* TITLE (portrait only) */}
-        {!isLandscape ? (
-          <View style={{ flex: 1, minWidth: 0 }}>
-            <Text
-              style={[Styles.topBarTitle, { textAlign: "center" }]}
-              numberOfLines={1}
-            >
-              {title}
-            </Text>
-          </View>
-        ) : null}
-
-        {/* RIGHT SLOT placeholder (portrait only) */}
-        {!isLandscape ? <View style={{ width: 56 }} /> : null}
-      </View>
-    </SafeAreaView>
+      ) : (
+        <Text
+          style={{ color: "white", fontSize: 12, textAlign: "center" }}
+          numberOfLines={2}
+        >
+          {title}
+        </Text>
+      )}
+    </View>
   );
 }

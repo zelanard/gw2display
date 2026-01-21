@@ -4,6 +4,7 @@ import FastImage from "@d11/react-native-fast-image";
 import { useStyles } from "../../theme/ThemeContext";
 import { useGw2Api } from "../gw2/Gw2ApiContext";
 import { Divider } from "../Divider";
+import { useTitle } from "../TitleContext";
 
 function IconCell({ label, iconUri, caption, Styles }) {
   return (
@@ -100,6 +101,7 @@ function SkillsBlock({ title, skills, skillsById, Styles }) {
 
 export function BuildTab() {
   const Styles = useStyles();
+  const { setTitle } = useTitle();
   const { selectedCharacter, getCharacterTraitsAndSkills } = useGw2Api();
 
   const [data, setData] = useState(null);
@@ -124,6 +126,10 @@ export function BuildTab() {
     return () => { cancelled = true; };
   }, [selectedCharacter, getCharacterTraitsAndSkills]);
 
+  useEffect(() => {
+    setTitle(selectedCharacter ? selectedCharacter : "Build");
+  }, [selectedCharacter, setTitle]);
+
   if (!selectedCharacter) {
     return (
       <View style={Styles.screen}>
@@ -141,8 +147,6 @@ export function BuildTab() {
     <ScrollView>
       <View style={Styles.screen}>
         <Text style={Styles.h1}>Build</Text>
-        <Divider />
-        <Text style={Styles.h1}>{selectedCharacter}</Text>
         {data?.profession ? <Text style={Styles.p}>Profession: {data.profession}</Text> : null}
         <Divider />
 

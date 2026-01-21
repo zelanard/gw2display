@@ -6,6 +6,9 @@ import Orientation from "react-native-orientation-locker";
 
 import { BuildTab } from "./Tabs/BuildTab";
 import { EquipmentTab } from "./Tabs/EquipmentTab";
+import Ionicons from "react-native-vector-icons/Ionicons";
+import { useGw2Api } from "./gw2/Gw2ApiContext";
+import { useNavigation } from "@react-navigation/native";
 
 const Tab = createBottomTabNavigator();
 
@@ -52,13 +55,39 @@ function OrientationAwareTabBar(props) {
 }
 
 export function HomeScreen() {
+  const { apiKey } = useGw2Api();
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    if (!apiKey) {
+      navigation.replace("API");
+    }
+  }, [apiKey, navigation]);
+
   return (
     <Tab.Navigator
       screenOptions={{ headerShown: false }}
       tabBar={(props) => <OrientationAwareTabBar {...props} />}
     >
-      <Tab.Screen name="Build" component={BuildTab} />
-      <Tab.Screen name="Equipment" component={EquipmentTab} />
+      <Tab.Screen
+        name="Build"
+        component={BuildTab}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="hammer-outline" color={color} size={size} />
+          ),
+        }}
+      />
+
+      <Tab.Screen
+        name="Equipment"
+        component={EquipmentTab}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="briefcase-outline" color={color} size={size} />
+          ),
+        }}
+      />
     </Tab.Navigator>
   );
 }
