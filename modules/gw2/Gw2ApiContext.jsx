@@ -43,32 +43,37 @@ export function Gw2ApiProvider({ children }) {
 
   const clearError = useCallback(() => setError(null), []);
 
+  const buildUrl = (path, query) => {
+    const base = `${BASE_URL}${path}`;
+
+    if (!query || typeof query !== "object") return base;
+
+    const parts = [];
+    for (const [k, v] of Object.entries(query)) {
+      if (v === undefined || v === null) continue;
+      parts.push(`${encodeURIComponent(k)}=${encodeURIComponent(String(v))}`);
+    }
+
+    return parts.length ? `${base}?${parts.join("&")}` : base;
+  };
+
   const request = useCallback(
     async (path, { method = "GET", query = null, body = null, auth = true } = {}) => {
       setError(null);
 
-      const url = new URL(`${BASE_URL}${path}`);
-      if (query && typeof query === "object") {
-        Object.entries(query).forEach(([k, v]) => {
-          if (v !== undefined && v !== null) url.searchParams.set(k, String(v));
-        });
-      }
+      const url = buildUrl(path, query);
+      console.log("GW2 REQUEST:", url);
 
-      const headers = {
-        Accept: "application/json",
-      };
+      const headers = { Accept: "application/json" };
 
-      // In React Native you can safely send Authorization headers (no browser CORS preflight constraints).
       if (auth) {
         if (!apiKey) throw new Error("Missing API key. Set apiKey before calling authenticated endpoints.");
         headers.Authorization = `Bearer ${apiKey}`;
       }
 
-      if (body != null) {
-        headers["Content-Type"] = "application/json";
-      }
+      if (body != null) headers["Content-Type"] = "application/json";
 
-      const res = await fetch(url.toString(), {
+      const res = await fetch(url, {
         method,
         headers,
         body: body != null ? JSON.stringify(body) : undefined,
@@ -76,7 +81,6 @@ export function Gw2ApiProvider({ children }) {
 
       if (!res.ok) {
         const text = await readTextSafe(res);
-        // GW2 API often returns JSON, but this keeps error messages useful either way.
         throw new Error(`GW2 API error ${res.status}: ${text || res.statusText}`);
       }
 
@@ -84,7 +88,7 @@ export function Gw2ApiProvider({ children }) {
     },
     [apiKey]
   );
-
+  
   const getAccount = useCallback(async () => {
     return await request("/v2/account", { auth: true });
   }, [request]);
@@ -203,8 +207,11 @@ export function Gw2ApiProvider({ children }) {
     },
     [request]
   );
+
   const getCharacterEquipmentResolved = useCallback(
     async (characterName) => {
+      if (!characterName) throw new Error("Character name is required");
+
       const eq = await getCharacterEquipment(characterName);
 
       const itemIds = Array.from(
@@ -215,7 +222,6 @@ export function Gw2ApiProvider({ children }) {
         )
       );
 
-      // Public endpoint
       const items =
         itemIds.length > 0
           ? await request("/v2/items", {
@@ -224,12 +230,23 @@ export function Gw2ApiProvider({ children }) {
           })
           : [];
 
-      const itemsById = new Map(items.map((it) => [it.id, it]));
+      // Add these logs temporarily
+      console.log(
+        "EquipmentResolved:",
+        "ids=", itemIds.length,
+        "items=", Array.isArray(items) ? items.length : typeof items,
+        "first=", Array.isArray(items) ? items[0]?.id : undefined
+      );
+
+      // Option A: plain object lookup
+      const itemsById = Object.fromEntries(
+        (Array.isArray(items) ? items : []).map((it) => [it.id, it])
+      );
 
       return {
         equipment: eq?.equipment ?? [],
-        items, // array
-        itemsById, // Map for lookup
+        items,
+        itemsById,
         raw: eq,
       };
     },

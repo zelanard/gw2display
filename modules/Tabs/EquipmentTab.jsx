@@ -1,7 +1,68 @@
-import { useEffect, useState } from "react";
-import { useStyles } from "../../theme/ThemeContext";
+import { useEffect, useMemo, useState } from "react";
 import { ScrollView, Text, View } from "react-native";
+import FastImage from "@d11/react-native-fast-image";
+import { useStyles } from "../../theme/ThemeContext";
 import { useGw2Api } from "../gw2/Gw2ApiContext";
+
+const EQUIPMENT_GROUPS = {
+  armor: ["Helm", "Shoulders", "Coat", "Gloves", "Leggings", "Boots"],
+  weapons: [
+    "WeaponA1",
+    "WeaponA2",
+    "WeaponB1",
+    "WeaponB2",
+    "WeaponAquaticA",
+    "WeaponAquaticB",
+  ],
+  trinkets: [
+    "Backpack",
+    "Accessory1",
+    "Accessory2",
+    "Ring1",
+    "Ring2",
+    "Amulet",
+  ],
+  tools: ["Sickle", "Axe", "Pick"],
+};
+
+function titleCase(value) {
+  return value.charAt(0).toUpperCase() + value.slice(1);
+}
+
+function EquipmentCell({ slot, item, Styles }) {
+  const iconUri = item?.icon;
+
+  return (
+    <View
+      style={{
+        width: 84,
+        alignItems: "center",
+        margin: 6,
+      }}
+    >
+      {iconUri ? (
+        <FastImage
+          style={{ width: 48, height: 48 }}
+          source={{
+            uri: iconUri,
+            priority: FastImage.priority.normal,
+            cache: FastImage.cacheControl.immutable,
+          }}
+          resizeMode={FastImage.resizeMode.contain}
+          onError={(evt) => {
+            console.log("FastImage error", slot, iconUri, evt?.nativeEvent);
+          }}
+        />
+      ) : (
+        <View style={{ width: 48, height: 48 }} />
+      )}
+
+      <Text style={Styles.p} numberOfLines={2} textAlign="center">
+        {item?.name ?? slot}
+      </Text>
+    </View>
+  );
+}
 
 export function EquipmentTab() {
   const Styles = useStyles();
@@ -23,7 +84,9 @@ export function EquipmentTab() {
         const eq = await getCharacterEquipmentResolved(selectedCharacter);
         if (!cancelled) setData(eq);
       } catch (e) {
-        if (!cancelled) setLocalError(e instanceof Error ? e.message : String(e));
+        if (!cancelled) {
+          setLocalError(e instanceof Error ? e.message : String(e));
+        }
       }
     })();
 
@@ -31,6 +94,13 @@ export function EquipmentTab() {
       cancelled = true;
     };
   }, [selectedCharacter, getCharacterEquipmentResolved]);
+
+  const equipment = data?.equipment ?? [];
+  const itemsById = data?.itemsById ?? {};
+
+  const equipmentBySlot = useMemo(() => {
+    return Object.fromEntries(equipment.map((e) => [e.slot, e]));
+  }, [equipment]);
 
   if (!selectedCharacter) {
     return (
@@ -40,9 +110,6 @@ export function EquipmentTab() {
       </View>
     );
   }
-
-  const equipment = data?.equipment ?? [];
-  const itemsById = data?.itemsById ?? {}; // see Fix 2 below (plain object)
 
   return (
     <ScrollView>
@@ -55,16 +122,27 @@ export function EquipmentTab() {
         ) : !data ? (
           <Text style={Styles.p}>Loading...</Text>
         ) : (
-          equipment.map((e) => {
-            const item = itemsById[e.id];
-            return (
-              <View key={`${e.slot}-${e.id}`} style={{ marginBottom: 8 }}>
-                <Text style={Styles.p}>
-                  {e.slot}: {item?.name ?? `Item ${e.id}`}
-                </Text>
+          Object.entries(EQUIPMENT_GROUPS).map(([groupName, slots]) => (
+            <View key={groupName} style={{ marginBottom: 20 }}>
+              <Text style={Styles.h2}>{titleCase(groupName)}</Text>
+
+              <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
+                {slots.map((slot) => {
+                  const e = equipmentBySlot[slot];
+                  const item = e ? itemsById[e.id] : undefined;
+
+                  return (
+                    <EquipmentCell
+                      key={slot}
+                      slot={slot}
+                      item={item}
+                      Styles={Styles}
+                    />
+                  );
+                })}
               </View>
-            );
-          })
+            </View>
+          ))
         )}
       </View>
     </ScrollView>

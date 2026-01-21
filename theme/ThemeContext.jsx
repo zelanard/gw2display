@@ -81,6 +81,7 @@ function createStyles(theme) {
 
     screen: { flex: 1, padding: spacing.screen, backgroundColor: colors.bg },
     h1: { color: colors.text, ...typography.h1, marginBottom: 8 },
+    h2: { color: colors.text, ...typography.h2, marginBottom: 6 },
     p: { color: colors.textMuted, ...typography.body },
 
     drawerContainer: { flexGrow: 1 },

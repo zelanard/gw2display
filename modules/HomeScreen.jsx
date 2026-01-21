@@ -1,6 +1,7 @@
+// HomeScreen.jsx
+
 import React, { useEffect, useRef } from "react";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { useNavigation } from "@react-navigation/native";
+import { createBottomTabNavigator, BottomTabBar } from "@react-navigation/bottom-tabs";
 import Orientation from "react-native-orientation-locker";
 
 import { BuildTab } from "./Tabs/BuildTab";
@@ -8,44 +9,55 @@ import { EquipmentTab } from "./Tabs/EquipmentTab";
 
 const Tab = createBottomTabNavigator();
 
-
-function OrientationToggleController() {
-  const navigation = useNavigation();
+function OrientationAwareTabBar(props) {
+  const lastOrientationRef = useRef(null);
+  const lastTabRef = useRef(null);
 
   useEffect(() => {
-    const orientationHandler = (orientation) => {
-      console.log("Device orientation:", orientation);
-
-      if (orientation === "PORTRAIT-UPSIDEDOWN") {
-        navigation.jumpTo("Build");
-      } else if (orientation === "PORTRAIT") {
-        navigation.jumpTo("Equipment");
-      }
-    }
-
     const handler = (orientation) => {
-      orientationHandler(orientation);
+      if (!orientation || orientation === "UNKNOWN") return;
+
+      // De-spam repeated native events
+      if (lastOrientationRef.current === orientation) return;
+      lastOrientationRef.current = orientation;
+
+      let target = null;
+
+      if (orientation === "PORTRAIT-UPSIDEDOWN" || orientation === "LANDSCAPE-LEFT") {
+        target = "Build";
+      } else if (orientation === "PORTRAIT" || orientation === "LANDSCAPE-RIGHT") {
+        target = "Equipment";
+      }
+
+      if (!target) return;
+
+      // Avoid dispatching the same tab repeatedly
+      if (lastTabRef.current === target) return;
+      lastTabRef.current = target;
+
+      console.log("Device orientation:", orientation, "=> jumpTo", target);
+
+      // This is the TAB navigator's navigation object (always correct here)
+      props.navigation.jumpTo(target);
     };
+
+    // Initialize once (optional but recommended)
+    Orientation.getDeviceOrientation((o) => handler(o));
 
     Orientation.addDeviceOrientationListener(handler);
     return () => Orientation.removeDeviceOrientationListener(handler);
-  }, [navigation]);
+  }, [props.navigation]);
 
-  return null;
+  return <BottomTabBar {...props} />;
 }
 
 export function HomeScreen() {
   return (
-    <Tab.Navigator screenOptions={{ headerShown: false }}>
-      <Tab.Screen name="Build">
-        {() => (
-          <>
-            <OrientationToggleController />
-            <BuildTab />
-          </>
-        )}
-      </Tab.Screen>
-
+    <Tab.Navigator
+      screenOptions={{ headerShown: false }}
+      tabBar={(props) => <OrientationAwareTabBar {...props} />}
+    >
+      <Tab.Screen name="Build" component={BuildTab} />
       <Tab.Screen name="Equipment" component={EquipmentTab} />
     </Tab.Navigator>
   );
