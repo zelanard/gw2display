@@ -12,10 +12,10 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 const Gw2ApiContext = createContext(null);
 
 const BASE_URL = "https://api.guildwars2.com";
-const STORAGE_KEYS_V2 = "gw2_api_keys_v2"; // [{id,key,fp}]
+const STORAGE_KEYS_V2 = "gw2_api_keys_v2";
 const STORAGE_SELECTED_KEY = "gw2_selected_key_id";
 
-// Toggle this if you ever want to silence logs quickly
+// controls whether to log or not
 const DEBUG = false;
 
 function log(...args) {

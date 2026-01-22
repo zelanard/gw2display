@@ -1,4 +1,3 @@
-// contexts/OrientationContext.js
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import Orientation from "react-native-orientation-locker";
 
@@ -12,7 +11,7 @@ function mapOrientationToTab(o) {
 }
 
 function isPortrait(o) {
-  // Default to portrait until we know (prevents “it looks wrong on launch”)
+  // Default to portrait until we know
   if (!o || o === "UNKNOWN") return true;
   return o === "PORTRAIT" || o === "PORTRAIT-UPSIDEDOWN";
 }
