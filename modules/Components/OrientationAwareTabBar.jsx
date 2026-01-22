@@ -26,8 +26,7 @@ export function HomeScreen() {
   const tabBarStyle = useMemo(
     () => ({
       backgroundColor: "rgba(255,255,255,0.15)",
-      paddingBottom: portrait ? 100 : 5,
-      marginBottom: portrait ? 0 : 5,
+      paddingBottom: portrait ? 100 : 0,
       paddingTop: 10,
     }),
     [portrait]
@@ -35,11 +34,10 @@ export function HomeScreen() {
 
   return (
     <Tab.Navigator
-      key={portrait ? "portrait" : "landscape"}   // forces remount on orientation flip
-      screenOptions={{
+      screenOptions={() => ({
         headerShown: false,
         tabBarStyle,
-      }}
+      })}
       tabBar={(props) => (
         <>
           <OrientationTabSync navigation={props.navigation} />
@@ -56,6 +54,7 @@ export function HomeScreen() {
           ),
         }}
       />
+
       <Tab.Screen
         name="Equipment"
         component={EquipmentTab}

@@ -6,6 +6,7 @@ import { MainStack } from "./modules/MainStack";
 import { DrawerContent } from "./modules/menu/DrawerContent";
 import { ThemeProvider, useTheme } from "./theme/ThemeContext";
 import { Gw2ApiProvider } from "./modules/contexts/Gw2ApiContext";
+import { OrientationProvider } from "./modules/contexts/OrientationContext";
 
 const Drawer = createDrawerNavigator();
 
@@ -13,24 +14,26 @@ function AppShell() {
   const theme = useTheme();
 
   return (
-    <NavigationContainer>
-      <Gw2ApiProvider>
-        <Drawer.Navigator
-          screenOptions={{
-            headerShown: false,
-            drawerType: "front",
-            drawerStyle: {
-              width: theme.sizing.drawerWidth,
-              backgroundColor: theme.colors.topBar,
-            },
-            overlayColor: theme.colors.overlay,
-          }}
-          drawerContent={(p) => <DrawerContent {...p} />}
-        >
-          <Drawer.Screen name="Main" component={MainStack} />
-        </Drawer.Navigator>
-      </Gw2ApiProvider>
-    </NavigationContainer>
+    <OrientationProvider>
+      <NavigationContainer>
+        <Gw2ApiProvider>
+          <Drawer.Navigator
+            screenOptions={{
+              headerShown: false,
+              drawerType: "front",
+              drawerStyle: {
+                width: theme.sizing.drawerWidth,
+                backgroundColor: theme.colors.topBar,
+              },
+              overlayColor: theme.colors.overlay,
+            }}
+            drawerContent={(p) => <DrawerContent {...p} />}
+          >
+            <Drawer.Screen name="Main" component={MainStack} />
+          </Drawer.Navigator>
+        </Gw2ApiProvider>
+      </NavigationContainer>
+    </OrientationProvider>
   );
 }
 
