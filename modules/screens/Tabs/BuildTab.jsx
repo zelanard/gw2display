@@ -64,7 +64,9 @@ function SkillsBlock({ title, skills, skillsById, Styles }) {
 
   return (
     <View>
-      <Text style={Styles.h2}>{title}</Text>
+      <View style={{ backgroundColor: "rgba(255,255,255,.15)" }}>
+        <Text style={Styles.h2}>{title}</Text>
+      </View>
 
       <ScrollView
         horizontal
@@ -162,7 +164,9 @@ export function BuildTab() {
             <Divider />
 
             <View style={{ marginBottom: 16 }}>
-              <Text style={Styles.h2}>Specializations</Text>
+              <View style={{ backgroundColor: "rgba(255,255,255,.15)" }}>
+                <Text style={Styles.h2}>Specializations</Text>
+              </View>
 
               {specs.length ? (
                 specs.map((line, idx) => {

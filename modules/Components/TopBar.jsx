@@ -1,10 +1,11 @@
 // TopBar.js (or TopBar.jsx)
 
 import React from "react";
-import { View, Text, Pressable } from "react-native";
+import { View } from "react-native";
 import { useNavigation, DrawerActions } from "@react-navigation/native";
-import Ionicons from "react-native-vector-icons/Ionicons";
 import { useTitle } from "../contexts/TitleContext";
+import TopPortrait from "./TopPortrait";
+import TopLandscape from "./TopLandscape";
 
 export function TopBar({ isLandscape, sidebarWidth }) {
   const { title } = useTitle();
@@ -26,34 +27,11 @@ export function TopBar({ isLandscape, sidebarWidth }) {
       }}
     >
 
-      {!isLandscape ? (
-        <View style={{ flexDirection: "row", marginTop:"18", alignItems: "center" }}>
-          <Pressable
-            onPress={openMenu}
-            style={{
-              width: 44,
-              height: 44,
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-            hitSlop={8}
-          >
-            <Ionicons name="menu-outline" size={26} color="white" />
-          </Pressable>
-
-          <Text style={{ color: "white", fontSize: 18 }} numberOfLines={1}>
-            {title}
-          </Text>
-        </View>
-
-      ) : (
-        <Text
-          style={{ color: "white", fontSize: 12, textAlign: "center" }}
-          numberOfLines={2}
-        >
-          {title}
-        </Text>
-      )}
+      {!isLandscape ?
+        <TopPortrait openMenu={openMenu} title={title} />
+        :
+        <TopLandscape openMenu={openMenu} title={title} />
+      }
     </View>
   );
 }

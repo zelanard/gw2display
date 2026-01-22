@@ -63,10 +63,6 @@ export function MainStack() {
             >
               <Stack.Screen name="Home" component={HomeScreen} />
               <Stack.Screen name="API" component={APIScreen} />
-              <Stack.Screen
-                name="Settings"
-                component={SettingsScreen}
-              />
             </Stack.Navigator>
           </View>
         </View>

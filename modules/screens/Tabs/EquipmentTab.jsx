@@ -131,7 +131,9 @@ export function EquipmentTab() {
         ) : (
           Object.entries(EQUIPMENT_GROUPS).map(([groupName, slots]) => (
             <View key={groupName} style={{ marginBottom: 20 }}>
-              <Text style={Styles.h2}>{titleCase(groupName)}</Text>
+              <View style={{ backgroundColor: "rgba(255,255,255,.15)" }}>
+                <Text style={Styles.h2}>{titleCase(groupName)}</Text>
+              </View>
 
               <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
                 {slots.map((slot) => {
