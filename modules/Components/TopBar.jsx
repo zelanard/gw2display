@@ -18,7 +18,7 @@ export function TopBar({ isLandscape, sidebarWidth }) {
   return (
     <View
       style={{
-        width: isLandscape ? sidebarWidth : "100%",
+        width: isLandscape ? 72 : "100%",
         height: isLandscape ? "100%" : 56,
         paddingHorizontal: 12,
         paddingTop: isLandscape ? 12 : 25,

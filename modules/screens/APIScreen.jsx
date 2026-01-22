@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Button, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useGw2Api } from "../contexts/Gw2ApiContext";
-import { useStyles } from "../../theme/ThemeContext";
+import { useStyles } from "../contexts/ThemeContext";
 import { ScrollView } from "react-native-gesture-handler";
 
 export function APIScreen() {

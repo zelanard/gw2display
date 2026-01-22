@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, ScrollView } from "react-native";
 import FastImage from "@d11/react-native-fast-image";
-import { useStyles } from "../../../theme/ThemeContext";
+import { useStyles } from "../../contexts/ThemeContext";
 import { useGw2Api } from "../../contexts/Gw2ApiContext";
 import { Divider } from "../../Components/Divider";
 import { useTitle } from "../../contexts/TitleContext";

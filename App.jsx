@@ -4,7 +4,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { MainStack } from "./modules/MainStack";
 import { DrawerContent } from "./modules/menu/DrawerContent";
-import { ThemeProvider, useTheme } from "./theme/ThemeContext";
+import { ThemeProvider, useTheme } from "./modules/contexts/ThemeContext";
 import { Gw2ApiProvider } from "./modules/contexts/Gw2ApiContext";
 import { OrientationProvider } from "./modules/contexts/OrientationContext";
 

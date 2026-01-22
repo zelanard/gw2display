@@ -24,7 +24,7 @@ export function MainStack() {
   const isLandscape =
     orientation === "LANDSCAPE-LEFT" || orientation === "LANDSCAPE-RIGHT";
 
-  const sidebarWidth = 72;
+  const sidebarWidth = isLandscape ? 0 : 72;
 
   return (
     <TitleContext.Provider value={{ title, setTitle }}>

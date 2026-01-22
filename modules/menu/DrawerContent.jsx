@@ -2,7 +2,7 @@ import { DrawerContentScrollView } from "@react-navigation/drawer";
 import React, { useState } from "react";
 import { View, Text, Pressable } from "react-native";
 import { ExpandableSection } from "./ExpandableSection";
-import { useStyles } from "../../theme/ThemeContext";
+import { useStyles } from "../contexts/ThemeContext";
 import { useGw2Api } from "../contexts/Gw2ApiContext";
 import { ScrollView } from "react-native-gesture-handler";
 
