@@ -4,7 +4,7 @@ import React from "react";
 import { View, Text, Pressable } from "react-native";
 import { useNavigation, DrawerActions } from "@react-navigation/native";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import { useTitle } from "./TitleContext";
+import { useTitle } from "../contexts/TitleContext";
 
 export function TopBar({ isLandscape, sidebarWidth }) {
   const { title } = useTitle();

@@ -1,5 +1,3 @@
-// HomeScreen.jsx
-
 import React, { useEffect, useRef } from "react";
 import { createBottomTabNavigator, BottomTabBar } from "@react-navigation/bottom-tabs";
 import Orientation from "react-native-orientation-locker";
@@ -7,7 +5,7 @@ import Orientation from "react-native-orientation-locker";
 import { BuildTab } from "./Tabs/BuildTab";
 import { EquipmentTab } from "./Tabs/EquipmentTab";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import { useGw2Api } from "./gw2/Gw2ApiContext";
+import { useGw2Api } from "../contexts/Gw2ApiContext";
 import { useNavigation } from "@react-navigation/native";
 
 const Tab = createBottomTabNavigator();
@@ -20,7 +18,6 @@ function OrientationAwareTabBar(props) {
     const handler = (orientation) => {
       if (!orientation || orientation === "UNKNOWN") return;
 
-      // De-spam repeated native events
       if (lastOrientationRef.current === orientation) return;
       lastOrientationRef.current = orientation;
 
@@ -34,17 +31,14 @@ function OrientationAwareTabBar(props) {
 
       if (!target) return;
 
-      // Avoid dispatching the same tab repeatedly
       if (lastTabRef.current === target) return;
       lastTabRef.current = target;
 
       console.log("Device orientation:", orientation, "=> jumpTo", target);
 
-      // This is the TAB navigator's navigation object (always correct here)
       props.navigation.jumpTo(target);
     };
 
-    // Initialize once (optional but recommended)
     Orientation.getDeviceOrientation((o) => handler(o));
 
     Orientation.addDeviceOrientationListener(handler);
@@ -55,14 +49,15 @@ function OrientationAwareTabBar(props) {
 }
 
 export function HomeScreen() {
-  const { apiKey } = useGw2Api();
   const navigation = useNavigation();
+  const { hydrated, keys } = useGw2Api();
 
   useEffect(() => {
-    if (!apiKey) {
+    if (!hydrated) return;
+    if (!Array.isArray(keys) || keys.length === 0) {
       navigation.replace("API");
     }
-  }, [apiKey, navigation]);
+  }, [hydrated, keys, navigation]);
 
   return (
     <Tab.Navigator

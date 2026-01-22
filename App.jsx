@@ -3,9 +3,9 @@ import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { MainStack } from "./modules/MainStack";
-import { DrawerContent } from "./modules/DrawerContent";
+import { DrawerContent } from "./modules/menu/DrawerContent";
 import { ThemeProvider, useTheme } from "./theme/ThemeContext";
-import { Gw2ApiProvider } from "./modules/gw2/Gw2ApiContext";
+import { Gw2ApiProvider } from "./modules/contexts/Gw2ApiContext";
 
 const Drawer = createDrawerNavigator();
 

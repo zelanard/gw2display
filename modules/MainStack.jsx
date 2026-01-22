@@ -3,12 +3,11 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React, { useEffect, useState } from "react";
 import { View } from "react-native";
-import { HomeScreen } from "./HomeScreen";
-import { APIScreen } from "./APIScreen";
-import { SettingsScreen } from "./SettingsScreen";
-import { TopBar } from "./TopBar";
+import { HomeScreen } from "./screens/HomeScreen";
+import { APIScreen } from "./screens/APIScreen";
+import { TopBar } from "./Components/TopBar";
 import Orientation from "react-native-orientation-locker";
-import { TitleContext } from "./TitleContext"; // or same file
+import { TitleContext } from "./contexts/TitleContext";
 
 export function MainStack() {
   const Stack = createNativeStackNavigator();
@@ -41,7 +40,6 @@ export function MainStack() {
         >
           <Stack.Screen name="Home" component={HomeScreen} />
           <Stack.Screen name="API" component={APIScreen} />
-          <Stack.Screen name="Settings" component={SettingsScreen} />
         </Stack.Navigator>
       )}
 

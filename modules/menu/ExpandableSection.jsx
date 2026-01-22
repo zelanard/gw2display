@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, Pressable } from "react-native";
-import { useStyles } from "../theme/ThemeContext";
+import { useStyles } from "../../theme/ThemeContext";
 
 export function ExpandableSection({ title, isOpen, onToggle, children }) {
   const Styles = useStyles();

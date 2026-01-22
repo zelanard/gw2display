@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, ScrollView } from "react-native";
 import FastImage from "@d11/react-native-fast-image";
-import { useStyles } from "../../theme/ThemeContext";
-import { useGw2Api } from "../gw2/Gw2ApiContext";
-import { Divider } from "../Divider";
-import { useTitle } from "../TitleContext";
+import { useStyles } from "../../../theme/ThemeContext";
+import { useGw2Api } from "../../contexts/Gw2ApiContext";
+import { Divider } from "../../Components/Divider";
+import { useTitle } from "../../contexts/TitleContext";
 
 function IconCell({ label, iconUri, caption, Styles }) {
   return (
